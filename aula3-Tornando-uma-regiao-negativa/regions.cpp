@@ -23,8 +23,8 @@ int main(int argc, char** argv) {
 
   namedWindow("janela", WINDOW_AUTOSIZE);
 //os nomes estão como Y e X para evitar confusoes(em mim), estou ciente do sistema referencial do tipo destrógiro.
-  for (int y=ponto1y; y < ponto2y; y++) {
-    for (int x=ponto1x; x < ponto2x; x++) {
+  for (int y=ponto1y; y < ponto2y; y++) {//que é X na verdade
+    for (int x=ponto1x; x < ponto2x; x++) {//que é Y na verdade
       image.at<uchar>(y,x)= 255 - image.at<uchar>(y,x);
     }
   }

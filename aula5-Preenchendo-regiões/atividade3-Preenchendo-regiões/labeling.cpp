@@ -23,36 +23,98 @@
 
 using namespace cv;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
   Mat image, mask;
   int width, height;
   int nobjects;
+  int preto;
 
   CvPoint p;
   image = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
 
-  if (!image.data) {
+  if (!image.data)
+  {
     std::cout << "Erro ao carregar a imagem.\n";
-    return(-1);
+    return (-1);
   }
   width = image.size().width;
   height = image.size().height;
 
+  printf("%d é a altura\n",width);
+  printf("%d é a largura\n",height);
+
   p.x = 0;
   p.y = 0;
 
+  // para não contar bolhas que tocam as bordas da imagem
+  preto = 0;
+  for (int i = 0; i < height; i++)
+  {
+    for (int j = 0; j < width; j++)
+    {
+      if (i == 0)
+      {
+        if (image.at<uchar>(i, j) == 255)
+        {
+          // Encontrou um objeto na borda
+          //nobjects++;
+          p.x = j;
+          p.y = i;
+          floodFill(image, p, preto);
+        }
+      }
+      if (j == 0)
+      {
+        if (image.at<uchar>(i, j) == 255)
+        {
+          // Encontrou um objeto na borda
+          //nobjects++;
+          p.x = j;
+          p.y = i;
+          floodFill(image, p, preto);
+        }
+      }
+      if (i == height-1)
+      {
+        if (image.at<uchar>(i, j) == 255)
+        {
+          // Encontrou um objeto na borda
+          //nobjects++;
+          p.x = j;
+          p.y = i;
+          floodFill(image, p, preto);
+        }
+      }
+      if (j == width-1)
+      {
+        if (image.at<uchar>(i, j) == 255)
+        {
+          // Encontrou um objeto na borda
+          //nobjects++;
+          p.x = j;
+          p.y = i;
+          floodFill(image, p, preto);
+        }
+      }
+    }
+  }
+
   // Busca objetos com buracos
   nobjects = 0;
-  for (int i=0;  i < height;  i++) {
-    for (int j=0;  j < width;  j++) {
-      if (image.at<uchar>(i, j) == 255) {
-		// Encontrou um objeto
-		nobjects++;
-		p.x = j;
-		p.y = i;
-		floodFill(image, p, nobjects);
-	  }
-	}
+  for (int i = 0; i < height; i++)
+  {
+    for (int j = 0; j < width; j++)
+    {
+      if (image.at<uchar>(i, j) == 255)
+      {
+        // Encontrou um objeto
+        nobjects++;
+        p.x = j;
+        p.y = i;
+        //floodFill(image, p, nobjects);
+      }
+    }
   }
   imshow("image", image);
   imwrite("labeling.png", image);

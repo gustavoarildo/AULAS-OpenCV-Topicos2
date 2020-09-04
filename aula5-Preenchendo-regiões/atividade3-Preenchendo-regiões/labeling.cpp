@@ -23,18 +23,19 @@
 
 using namespace cv;
 
-int main(int argc, char **argv)
+int main(int argc, char **argv)//recebe o nome da imagem como argumento
 {
   Mat image, mask;
   int width, height;
   int nobjectsBURACO;
   int nobjectsNOTBURACO;
   int preto;
+  int branco;
 
   CvPoint p;
-  image = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
+  image = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);//abre a imagem em escala de cinza
 
-  if (!image.data)
+  if (!image.data)//verifica se a imagem abriu corretamente
   {
     std::cout << "Erro ao carregar a imagem.\n";
     return (-1);
@@ -42,60 +43,61 @@ int main(int argc, char **argv)
   width = image.size().width;
   height = image.size().height;
 
-  printf("%d é a altura\n", width);
-  printf("%d é a largura\n", height);
+  printf("%d é a altura\n", width);//verifica o valor de altura atual da imagem
+  printf("%d é a largura\n", height);//verifica o valor de largura atual da imagem
 
-  p.x = 0;
-  p.y = 0;
+  p.x = 0;//valor do ponto x
+  p.y = 0;//valor do ponto y
 
   // para não contar bolhas que tocam as bordas da imagem
-  preto = 0;
+  preto = 0;//0 é preto
+  branco = 255;//255 é branco
   for (int i = 0; i < height; i++)
   {
     for (int j = 0; j < width; j++)
     {
       if (i == 0)
       {
-        if (image.at<uchar>(i, j) == 255)
+        if (image.at<uchar>(i, j) == branco)//se encontra branco na borda
         {
           // Encontrou um objeto na borda
           //nobjects++;
           p.x = j;
           p.y = i;
-          floodFill(image, p, preto);
+          floodFill(image, p, preto);//enche com preto
         }
       }
       if (j == 0)
       {
-        if (image.at<uchar>(i, j) == 255)
+        if (image.at<uchar>(i, j) == branco)//se encontra branco na borda
         {
           // Encontrou um objeto na borda
           //nobjects++;
           p.x = j;
           p.y = i;
-          floodFill(image, p, preto);
+          floodFill(image, p, preto);//enche com preto
         }
       }
       if (i == height - 1)
       {
-        if (image.at<uchar>(i, j) == 255)
+        if (image.at<uchar>(i, j) == branco)//se encontra branco na borda
         {
           // Encontrou um objeto na borda
           //nobjects++;
           p.x = j;
           p.y = i;
-          floodFill(image, p, preto);
+          floodFill(image, p, preto);//enche com preto
         }
       }
       if (j == width - 1)
       {
-        if (image.at<uchar>(i, j) == 255)
+        if (image.at<uchar>(i, j) == branco)//se encontra branco na borda
         {
           // Encontrou um objeto na borda
           //nobjects++;
           p.x = j;
           p.y = i;
-          floodFill(image, p, preto);
+          floodFill(image, p, preto);//enche com preto
         }
       }
     }
@@ -103,46 +105,48 @@ int main(int argc, char **argv)
 
   p.x = 0;
   p.y = 0;
-  floodFill(image, p, 1);
+  floodFill(image, p, 1);//o espaço entre objetos agora é diferente de preto
+  //quer dizer que de preto só tem buraco agora
 
   // Busca objetos com buracos
-  nobjectsBURACO = 0;
+  nobjectsBURACO = 0;//0 porque não procurou ainda, porque quem procura acha
   for (int i = 0; i < height; i++)
   {
     for (int j = 0; j < width; j++)
     {
-      if (image.at<uchar>(i, j) == 0)
+      if (image.at<uchar>(i, j) == preto)//achou o buraco preto
       {
-        if (image.at<uchar>(i, j-1) == 255)
+        if (image.at<uchar>(i, j - 1) == branco)//o objeto emburacado branco
         {
           // Encontrou um objeto com buraco
           nobjectsBURACO++;
-          p.x = j-1;
+          p.x = j - 1;
           p.y = i;
-          floodFill(image, p, 50);
+          floodFill(image, p, 50);//rotulado pra 50
         }
       }
     }
   }
 
-  /*
-  // Busca objetos com buracos
-  nobjects = 0;
+  // Busca objetos com ausencia de buracos
+  nobjectsNOTBURACO = 0;//0 porque não efetuou a busca ainda
   for (int i = 0; i < height; i++)
   {
     for (int j = 0; j < width; j++)
     {
-      if (image.at<uchar>(i, j) == 255)
+      if (image.at<uchar>(i, j) == branco)//os objetos brancos que sobraram não tem buraco
       {
-        // Encontrou um objeto
-        nobjects++;
+        // Encontrou um objeto que não tem buraco
+        nobjectsNOTBURACO++;
         p.x = j;
         p.y = i;
-        //floodFill(image, p, nobjects);
+        floodFill(image, p, 150);//rotulado 150
       }
     }
   }
-*/
+//imprime resultado
+  printf("%d é a quantidade de objetos que possuem buraco\n", nobjectsBURACO);
+  printf("%d é a quantidade de objetos que não possuem buraco\n", nobjectsNOTBURACO);
 
   imshow("image", image);
   imwrite("labeling.png", image);

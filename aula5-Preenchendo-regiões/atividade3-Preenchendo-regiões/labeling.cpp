@@ -27,7 +27,8 @@ int main(int argc, char **argv)
 {
   Mat image, mask;
   int width, height;
-  int nobjects;
+  int nobjectsBURACO;
+  int nobjectsNOTBURACO;
   int preto;
 
   CvPoint p;
@@ -41,8 +42,8 @@ int main(int argc, char **argv)
   width = image.size().width;
   height = image.size().height;
 
-  printf("%d é a altura\n",width);
-  printf("%d é a largura\n",height);
+  printf("%d é a altura\n", width);
+  printf("%d é a largura\n", height);
 
   p.x = 0;
   p.y = 0;
@@ -75,7 +76,7 @@ int main(int argc, char **argv)
           floodFill(image, p, preto);
         }
       }
-      if (i == height-1)
+      if (i == height - 1)
       {
         if (image.at<uchar>(i, j) == 255)
         {
@@ -86,7 +87,7 @@ int main(int argc, char **argv)
           floodFill(image, p, preto);
         }
       }
-      if (j == width-1)
+      if (j == width - 1)
       {
         if (image.at<uchar>(i, j) == 255)
         {
@@ -100,6 +101,31 @@ int main(int argc, char **argv)
     }
   }
 
+  p.x = 0;
+  p.y = 0;
+  floodFill(image, p, 1);
+
+  // Busca objetos com buracos
+  nobjectsBURACO = 0;
+  for (int i = 0; i < height; i++)
+  {
+    for (int j = 0; j < width; j++)
+    {
+      if (image.at<uchar>(i, j) == 0)
+      {
+        if (image.at<uchar>(i, j-1) == 255)
+        {
+          // Encontrou um objeto com buraco
+          nobjectsBURACO++;
+          p.x = j-1;
+          p.y = i;
+          floodFill(image, p, 50);
+        }
+      }
+    }
+  }
+
+  /*
   // Busca objetos com buracos
   nobjects = 0;
   for (int i = 0; i < height; i++)
@@ -116,6 +142,8 @@ int main(int argc, char **argv)
       }
     }
   }
+*/
+
   imshow("image", image);
   imwrite("labeling.png", image);
   waitKey();

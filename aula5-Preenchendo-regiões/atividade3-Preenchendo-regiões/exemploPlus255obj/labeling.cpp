@@ -1,6 +1,9 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <iostream>
+#include <vector>
 
+using namespace std;
 using namespace cv;
 
 int main(int argc, char **argv)
@@ -10,6 +13,7 @@ int main(int argc, char **argv)
   int nobjects;
   Vec3b valROTULA; //Uso de matriz rgb para superar 255 objetos
   Vec3b valBRANCO; //cor branca
+  vector<vector<int>> pilhaVec3b;//guardar as cores
 
   CvPoint p;
   image = imread(argv[1], CV_LOAD_IMAGE_COLOR); //cores RGB = 255*255*255 = mais de 16 milhões
@@ -33,6 +37,33 @@ int main(int argc, char **argv)
   valROTULA[1] = 0; //GREEN//VERDE
   valROTULA[2] = 0; //RED//VERMELHO
 
+  for (int i = 1; i < 255; i++)
+  {
+    for (int j = 1; j < 255; j++)
+    {
+
+      for (int k = 1; k < 255; k++)
+      {
+        //valROTULA[0] = i; //BLUE//AZUL
+        //valROTULA[1] = j; //GREEN//VERDE
+        //valROTULA[2] = k; //RED//VERMELHO
+
+        //pilhaVec3b.push_back(valROTULA);
+        vector<int> v1;
+         v1.push_back(i);
+         v1.push_back(j);
+         v1.push_back(k);
+
+        //pilhaVec3b.push_back(i);
+        //pilhaVec3b.push_back(j);
+        //pilhaVec3b.push_back(k);
+
+        pilhaVec3b.push_back(v1);
+
+        //put vairotula
+      }
+    }
+  }
 
   // Busca objetos com buracos
   nobjects = 0;
@@ -47,31 +78,26 @@ int main(int argc, char **argv)
         p.x = j;
         p.y = i;
 
-        ///*
-
         //UTILIZANDO AS CORES
-     
+        if (!pilhaVec3b.empty())
         {
-          if (valROTULA[0] < 255 && valROTULA[1] == 0 && valROTULA[2] == 0) //B
-          {
-            valROTULA[0]++; //AZUL
-          }
-          if (valROTULA[0] >= 255 && valROTULA[1] < 255 && valROTULA[2] == 0) //BG
-          {
-            valROTULA[1]++; //VERDE
-          }
-          if (valROTULA[0] >= 255 && valROTULA[1] >= 255 && valROTULA[2] < 255) //BGR
-          {
-            valROTULA[2]++; //VERMELHO
-          }
+          int tamanhoPilha = pilhaVec3b.size();
+          valROTULA[0] = pilhaVec3b[tamanhoPilha].size(); //BLUE//AZUL
+          pilhaVec3b.pop_back();
+          valROTULA[1] = pilhaVec3b[tamanhoPilha].size(); //GREEN//VERDE
+          pilhaVec3b.pop_back();
+          valROTULA[2] = pilhaVec3b[tamanhoPilha].size(); //RED//VERMELHO
+          pilhaVec3b.pop_back();
 
-        
-        //*/
-
-        floodFill(image, p, valROTULA);
+          floodFill(image, p, valROTULA);
+        }
+        else{printf("acabaram as cores\n");}
       }
     }
   }
+
+  printf("%d é a quantidade de objetos existentes\n", nobjects);
+
   imshow("image", image);
   imwrite("labeling.png", image);
   waitKey();

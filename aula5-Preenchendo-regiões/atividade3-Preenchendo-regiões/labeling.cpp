@@ -6,15 +6,18 @@
 //Identifique a situação em que isso ocorre,
 //pesquise e proponha sua própria solução para este problema.
 
-//RESPOSTA: A situação que isso ocorre é quando existem mais de 255 objetos em cena,
-//por que no codigo de exemplo existem apenas 256 tons de cinza,
-//no codigo cada objeto é rotulado com um tom diferente
-//e por esses fatores o proceso é comprometido
+//RESPOSTA SITUAÇÃO: A situação que isso ocorre é quando existem mais de 255 objetos em cena,
+//ou seja para atingir essa combinação de cores é necessario 8 bits, por que no
+//codigo de exemplo existem apenas 256 tons de cinza,e como cada objeto é rotulado com
+//um tom diferente,desta forma ao final do processo de rotulação caso houver esgotado
+//os tons disponiveis para essa quantidade de bits, o processo de rotulaçao não sera
+//realizado de forma adequada, passando a repetir as cores ja utilizadas devido ao overflow,
+//por esses fatores o proceso será comprometido.
 
-//RESPOSTA: Uma solução para este problema seria aumentar
+//RESPOSTA SOLUÇÃO: Uma solução para este problema seria aumentar
 //a quantidade de tons ou cores que temos para trabalhar a rotulação,
 //por exemplo utilizando RGB com suas combinaçoes ou em vez de usar 8 bits (256 tons)
-//usar um valor de 9, 10 bits por exemplo, com 10 ja haveria a possibilidade de rotular 1024
+//usar um valor de 9, 10 bits, com 10 ja haveria a possibilidade de rotular 1024
 //objetos com tons diferentes. É claro com base no exemplo o preto é o espaço entre os objetos
 //então na verdade poderiam ser rotulados 1023 objetos com 10 bits para representar a imagem.
 
